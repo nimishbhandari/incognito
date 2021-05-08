@@ -12,9 +12,7 @@ require("dotenv").config();
 app.use(express.json());
 
 //test route
-app.use("/", (req, res) => {
-  res.send("hello");
-});
+app.use("/api/user", require("./api/user"));
 
 PORT = process.env.PORT;
 MODE = process.env.MODE;
