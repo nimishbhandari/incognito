@@ -1,12 +1,16 @@
 {
-  "name": "backend",
+  "name": "incognito_backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Anonymous social networking site",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm server",
+    "server": "nodemon server"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Anonymous",
+    "Social Networking Site"
+  ],
+  "author": "Nimish Bhandari",
   "license": "ISC"
 }
