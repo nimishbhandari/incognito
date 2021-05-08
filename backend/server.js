@@ -2,6 +2,16 @@ const express = require("express");
 
 const app = express();
 
-app.listen(5000, () => {
-  console.log(`Server running on PORT 5000`);
+//Dotenv
+require("dotenv").config();
+
+//test route
+app.use("/", (req, res) => {
+  res.send("hello");
+});
+
+PORT = process.env.PORT;
+MODE = process.env.MODE;
+app.listen(PORT, () => {
+  console.log(`Server running in ${MODE} on PORT ${PORT}`);
 });
