@@ -11,9 +11,10 @@ require("dotenv").config();
 //Init middleware
 app.use(express.json());
 
-//test route
-app.use("/api/user", require("./api/user"));
+//Defin Routes
+app.use("/api/users", require("./api/users"));
 
+//Run Server
 PORT = process.env.PORT;
 MODE = process.env.MODE;
 app.listen(PORT, () => {
