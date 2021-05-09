@@ -1,7 +1,9 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator");
-const mongoose = require("mongoose");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const jwtKey = process.env.jwt;
 
 // Model
 const User = require("../models/User");
@@ -21,23 +23,45 @@ router.post(
     min: 6,
   }),
   async (req, res) => {
+    //checking client input erros
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { name, username, password } = req.body;
-    const user = new User({
-      name,
-      username,
-      password,
-    });
+
     try {
+      const checkUser = await User.findOne({ username });
+
+      if (checkUser) {
+        return res.status(400).send("Username already taken");
+      }
+
+      const user = new User({
+        name,
+        username,
+        password,
+      });
+
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+
       await user.save();
-      res.send("success");
+
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      jwt.sign(payload, jwtKey, { expiresIn: "5 days" }, (err, token) => {
+        if (err) throw err;
+        return res.json({ token });
+      });
     } catch (error) {
       console.error(error.message);
-      res.status(500).send("Server Error");
+      return res.status(500).send("Server Error");
     }
   }
 );
@@ -49,6 +73,15 @@ router.post(
 // GET - api/users/
 // Get all users
 // PUBLIC
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.send(users);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send("Server Error");
+  }
+});
 
 // GET - api/users/:id
 // Get a user by id
