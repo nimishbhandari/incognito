@@ -13,6 +13,19 @@ const User = require("../models/User");
 @DESC  - All user related routes
 */
 
+// GET - api/users/me
+// Get user by a token
+// PRIVATE
+router.get("/me", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.send(user);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send("Server Error");
+  }
+});
+
 // POST - api/users
 // Regiter a user and get a token
 // PUBLIC
@@ -115,7 +128,7 @@ router.post(
 // GET - api/users/
 // Get all users
 // PUBLIC
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const users = await User.find().select("-password");
     return res.json(users);
@@ -139,9 +152,5 @@ router.get("/:username", async (req, res) => {
     return res.status(500).send("Server Error");
   }
 });
-
-// GET - api/users/me
-// Get user by a token
-// PRIVATE
 
 module.exports = router;
